@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "ankiff",
+  "version": "1.0",
+
+  "description": "Adds a 'Save to Anki' option for any selected text.",
+  "homepage_url": "https://github.com/wConnor/ankiff",
+  "icons": {
+    "32": "icons/ankiff-connected-32.png"
+  },
+
+  "host_permissions": [
+    "*://localhost:*/*",
+    "*://127.0.0.1:*/*"
+  ],
+
+  "permissions": [
+    "contextMenus",
+    "activeTab",
+    "webRequest"
+  ],
+
+  "browser_action": {
+    "default_icon": "icons/ankiff-32.png",
+    "default_title": "ankiff",
+    "default_popup": "popup/ankiff-settings.html"
+  }
+}
