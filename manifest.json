@@ -14,10 +14,16 @@
     "*://127.0.0.1:*/*"
   ],
 
+  "background": {
+	"scripts": ["background.js"]
+  },
+
   "permissions": [
     "contextMenus",
     "activeTab",
-    "webRequest"
+    "webRequest",
+    "notifications",
+    "storage"
   ],
 
   "browser_action": {
