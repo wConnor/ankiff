@@ -14,44 +14,80 @@ function initSettings() {
 
 browser.contextMenus.create(
   {
-    id: "save-to-anki",
-    title: "Save to Anki",
+    id: "save-to-default-deck",
+    title: "Save to deck '" + localStorage.getItem("default_deck") + "'",
     contexts: ["selection"]
   }
 );
 
-browser.contextMenus.onClicked.addListener(async function (info, tab) {
-  if (info.menuItemId == "save-to-anki") {
-    const ip_port = "http://" + localStorage.getItem("ip") + ":" + localStorage.getItem("port");
-    const request = { action: "addNote",
-                      version: 6,
-                      params: {
-                        note: {
-                          deckName: "foobar",
-                          modelName: "Basic",
-                          fields: {
-                            Front: "fronto",
-                            Back: "backo"
-                          }
-                        }
-                      }
-                    };
-    fetch(ip_port, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request)
-    })
-      .then((response) => {
-        if (response.result == null) {
-          browser.notifications.create({
-            type: "basic",
-            message: "Failed to add note to deck.",
-            title: "ankiff - Error"
-          });
-        }
-      })
-      .then((error) => console.error(error));
+browser.contextMenus.create(
+  {
+    id: "separator-1",
+    type: "separator",
+    contexts: ["selection"]
   }
+);
+
+populateDecks();
+
+function populateDecks() {
+  const ip_port = "http://" + localStorage.getItem("ip") + ":" + localStorage.getItem("port");
+  const request = { action: "deckNames", version: 6 };
+
+  fetch(ip_port, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request)
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      response.result.forEach(e => {
+        browser.contextMenus.create(
+          {
+            id: e,
+            title: "Save to deck '" + e + "'",
+            contexts: ["selection"]
+          }
+        );
+      });
+    })
+    .then((error) => console.error(error));
+
+}
+
+browser.contextMenus.onClicked.addListener(async function (info, tab) {
+  const ip_port = "http://" + localStorage.getItem("ip") + ":" + localStorage.getItem("port");
+  const request = {
+    action: "addNote",
+    version: 6,
+    params: {
+      note: {
+        deckName: info.menuItemId,
+        modelName: "Basic",
+        fields: {
+          Front: info.selectionText,
+          Back: "backo"
+        }
+      }
+    }
+  };
+  fetch(ip_port, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request)
+  })
+    .then((response) => {
+      if (response.result === null) {
+        browser.notifications.create({
+          type: "basic",
+          message: "Failed to add note to deck.",
+          title: "ankiff - Error"
+        });
+      }
+    })
+    .then((error) => console.error(error));
 });

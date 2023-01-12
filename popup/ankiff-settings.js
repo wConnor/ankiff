@@ -17,14 +17,14 @@ function initSettings() {
 
 document.getElementById("test-connection-btn").onclick = function () {
   const ip_port = "http://" + document.getElementById("ip").value + ":" + document.getElementbyId("port").value;
-  const data = { action: "deckNames", version: 6 };
+  const request = { action: "deckNames", version: 6 };
 
   fetch(ip_port, {
-    method: "POST", 
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(request)
   })
     .then((response) => {
       if (response.status === 200) {
@@ -39,8 +39,8 @@ document.getElementById("test-connection-btn").onclick = function () {
 };
 
 document.getElementById("save-ac-settings").onclick = function () {
-  localStorage.setItem("ip", document.getElementById("ip").value); 
-  localStorage.setItem("port", document.getElementById("port").value); 
+  localStorage.setItem("ip", document.getElementById("ip").value);
+  localStorage.setItem("port", document.getElementById("port").value);
   localStorage.setItem("default_deck", "foobar");
   //  localStorage.setItem("default_deck", document.getElementById("default_deck").value); 
 };
