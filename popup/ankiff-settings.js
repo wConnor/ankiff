@@ -15,9 +15,13 @@ function initSettings() {
   document.getElementById("port").value = localStorage.getItem("port");
 }
 
-document.getElementById("test-connection-btn").onclick = function () {
-  const ip_port = "http://" + document.getElementById("ip").value + ":" + document.getElementbyId("port").value;
+document.getElementById("test-connection-btn").onclick = async function () {
+  const ip = document.getElementById("ip").value;
+  const port = document.getElementById("port").value;
+  const ip_port = "http://" + ip + ":" + port;
   const request = { action: "deckNames", version: 6 };
+
+  document.getElementById("connection-status").innerHTML = "";
 
   fetch(ip_port, {
     method: "POST",
@@ -35,7 +39,11 @@ document.getElementById("test-connection-btn").onclick = function () {
         document.getElementById("connection-status").innerHTML = "Failure";
       }
     })
-    .then((error) => console.error(error));
+  .then((error) => {
+    if (error != null) {
+      console.error(error);
+    }
+  });
 };
 
 document.getElementById("save-ac-settings").onclick = function () {

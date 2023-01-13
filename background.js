@@ -1,17 +1,3 @@
-initSettings();
-
-function initSettings() {
-  let checkFirstTime = browser.storage.local.get(null);
-  checkFirstTime.then((results) => {
-    let settingsKeys = Object.keys(results);
-    if (settingsKeys.length === 0) {
-      localStorage.setItem("ip", "127.0.0.1");
-      localStorage.setItem("port", "8765");
-      localStorage.setItem("default_deck", "default");
-    }
-  });
-}
-
 browser.contextMenus.create(
   {
     id: "save-to-default-deck",
@@ -30,8 +16,15 @@ browser.contextMenus.create(
 
 populateDecks();
 
-function populateDecks() {
-  const ip_port = "http://" + localStorage.getItem("ip") + ":" + localStorage.getItem("port");
+async function populateDecks() {
+  // temporary 'fix' until persistent settings implemented.
+  localStorage.setItem("ip", "127.0.0.1");
+  localStorage.setItem("port", "8765");
+  localStorage.setItem("default_deck", "default");
+
+  const ip = localStorage.getItem("ip");
+  const port = localStorage.getItem("port");
+  const ip_port = "http://" + ip + ":" + port;
   const request = { action: "deckNames", version: 6 };
 
   fetch(ip_port, {
@@ -43,6 +36,7 @@ function populateDecks() {
   })
     .then((response) => response.json())
     .then((response) => {
+      localStorage.setItem("decks", response.result);
       response.result.forEach(e => {
         browser.contextMenus.create(
           {
@@ -53,41 +47,18 @@ function populateDecks() {
         );
       });
     })
-    .then((error) => console.error(error));
-
+    .then((error) => {
+      if (error != null) {
+        console.error(error);
+      }
+    });
 }
 
 browser.contextMenus.onClicked.addListener(async function (info, tab) {
-  const ip_port = "http://" + localStorage.getItem("ip") + ":" + localStorage.getItem("port");
-  const request = {
-    action: "addNote",
-    version: 6,
-    params: {
-      note: {
-        deckName: info.menuItemId,
-        modelName: "Basic",
-        fields: {
-          Front: info.selectionText,
-          Back: "backo"
-        }
-      }
-    }
-  };
-  fetch(ip_port, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(request)
-  })
-    .then((response) => {
-      if (response.result === null) {
-        browser.notifications.create({
-          type: "basic",
-          message: "Failed to add note to deck.",
-          title: "ankiff - Error"
-        });
-      }
-    })
-    .then((error) => console.error(error));
+  // possibly change key names to something less misleading..? current
+  // names imply the addition of a new deck.
+  localStorage.setItem("newDeck", info.menuItemId);
+  localStorage.setItem("newFront", info.selectionText);
+
+  browser.tabs.create({ url: "./new-note/new-note.html" });
 });

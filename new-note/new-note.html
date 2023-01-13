@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="./new-note.css"/>
+  </head>
+
+  <body>
+    <h2 id="ankiff-title">ankiff - New Note</h2>
+    <label for="deckList">Deck:</label>
+
+    <select id="deckList" name="deckList">
+
+    </select>
+    <br><br>
+
+    <label for="front">Front: </label>
+    <input type="text" id="front" name="front" required/>
+    <br><br>
+
+    <label for="back">Back: </label>
+    <input type="text" id="back" name="back" required/>
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;(</span>
+    <label for="lang">Language: </label>
+    <input type="text" id="lang" name="lang" required/>
+
+    <button id="wiktionary-retrieve-btn" name="wiktionary-retrieve-btn">Retrieve from Wiktionary</button>
+    <span>)</span>
+    <br><br>
+
+    <button id="create-note-btn" name="create-note-btn">Create Note</button>
+    <button id="cancel-btn" name="cancel-btn">Cancel</button>
+
+    <script src="./new-note.js"></script>
+  </body>
+</html>
