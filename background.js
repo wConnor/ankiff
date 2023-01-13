@@ -36,7 +36,7 @@ async function populateDecks() {
   })
     .then((response) => response.json())
     .then((response) => {
-      localStorage.setItem("decks", response.result);
+      localStorage.setItem("decks", JSON.stringify(response.result));
       response.result.forEach(e => {
         browser.contextMenus.create(
           {

@@ -1,19 +1,11 @@
 populateFields();
 
-// very poor solution! decks containing a comma in their name may cause this function to
-// produce very unexpected results. ought to be rewritten in a way that can avoid this.
 function populateFields() {
-  const decks = localStorage.getItem("decks");
-  var json = [];
-  var toSplit = decks.split(",");
-
-  for (var i = 0; i < toSplit.length; i++) {
-    json.push({ "deck": toSplit[i] });
-  }
+  const decks = JSON.parse(localStorage.getItem("decks"));
 
   var select = document.getElementById("deckList");
-  for (var i = 0; i < json.length; i++) {
-    var opt = json[i].deck;
+  for (var i = 0; i < decks.length; i++) {
+    var opt = decks[i];
     var el = document.createElement("option");
     el.text = opt;
     el.value = opt;
@@ -22,7 +14,7 @@ function populateFields() {
   }
 
   select.value = localStorage.getItem("newDeck");
-  document.getElementById("front").value = localStorage.getItem("newFront");;
+  document.getElementById("front").value = localStorage.getItem("newFront");
 }
 
 document.getElementById("wiktionary-retrieve-btn").onclick = async function () {
